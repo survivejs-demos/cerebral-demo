@@ -21,5 +21,21 @@ controller.signal('laneCreated', (lane) => {
 
   model.tree.select('lanes').push(lane);
 });
+controller.signal('laneUpdated', ({id, name}) => {
+  console.log('update lane', id, name);
+});
+controller.signal('laneDeleted', (id) => {
+  console.log('delete lane', id);
+});
+
+controller.signal('noteCreated', ({laneId, note}) => {
+  console.log('create note', laneId, note);
+});
+controller.signal('noteUpdated', ({id, task}) => {
+  console.log('update note', id, task);
+});
+controller.signal('noteDeleted', ({laneId, noteId}) => {
+  console.log('delete note', laneId, noteId);
+});
 
 export default controller;

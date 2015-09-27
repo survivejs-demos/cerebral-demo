@@ -56,17 +56,33 @@ export default class Lane extends React.Component {
     );
   }
   addNote(laneId) {
+    this.props.signals.noteCreated({
+      laneId,
+      note: {task: 'New task'}
+    });
+
     //NoteActions.create({task: 'New task'});
     //LaneActions.attachToLane({laneId});
   }
   editNote(id, task) {
+    this.props.signals.noteUpdated({id, task});
+
     //NoteActions.update({id, task});
   }
   deleteNote(laneId, noteId) {
+    this.props.signals.noteDeleted({laneId, noteId});
+
     //NoteActions.delete(noteId);
     //LaneActions.detachFromLane({laneId, noteId});
   }
   editName(id, name) {
+    if(name) {
+      this.props.signals.laneUpdated({id, name});
+    }
+    else {
+      this.props.signals.laneDeleted(id);
+    }
+
     /*
     if(name) {
       LaneActions.update({id, name});
