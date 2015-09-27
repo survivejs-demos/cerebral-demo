@@ -21,7 +21,6 @@ export default class App extends React.Component {
     );
   }
   addItem() {
-    console.log('create lane');
     this.props.signals.laneCreated({name: 'New lane'});
   }
 }
