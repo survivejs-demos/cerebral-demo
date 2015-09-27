@@ -26,7 +26,10 @@ controller.signal('laneUpdated', ({id, name}) => {
   model.tree.select('lanes', {id}).set('name', name);
 });
 controller.signal('laneDeleted', (id) => {
-  console.log('delete lane', id);
+  model.tree.select('lanes', {id}).unset();
+
+  // it would be a good idea to seek and destroy possible
+  // associated notes. now they remain hanging in the memory
 });
 
 // notes
@@ -46,7 +49,8 @@ controller.signal('noteUpdated', ({id, task}) => {
   model.tree.select('notes', {id}).set('task', task);
 });
 controller.signal('noteDeleted', ({laneId, noteId}) => {
-  console.log('delete note', laneId, noteId);
+  model.tree.select('lanes', {id: laneId}, 'notes', noteId).unset();
+  model.tree.select('notes', {id: noteId}).unset();
 });
 
 export default controller;

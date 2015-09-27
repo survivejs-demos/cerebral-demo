@@ -52,7 +52,7 @@ export default class Lane extends React.Component {
         <Notes
           items={notes.map((id) =>
             allNotes[allNotes.findIndex((note) => note.id === id)]
-          )}
+          ).filter((a) => a)}
           onEdit={this.editNote}
           onDelete={this.deleteNote} />
       </div>
@@ -66,32 +66,16 @@ export default class Lane extends React.Component {
   }
   editNote(id, task) {
     this.props.signals.noteUpdated.sync({id, task});
-
-    //NoteActions.update({id, task});
   }
   deleteNote(laneId, noteId) {
-    this.props.signals.noteDeleted({laneId, noteId});
-
-    //NoteActions.delete(noteId);
-    //LaneActions.detachFromLane({laneId, noteId});
+    this.props.signals.noteDeleted.sync({laneId, noteId});
   }
   editName(id, name) {
-    console.log('edit name', id, name);
-
     if(name) {
       this.props.signals.laneUpdated.sync({id, name});
     }
     else {
-      this.props.signals.laneDeleted(id);
+      this.props.signals.laneDeleted.sync(id);
     }
-
-    /*
-    if(name) {
-      LaneActions.update({id, name});
-    }
-    else {
-      LaneActions.delete(id);
-    }
-    */
   }
 }
