@@ -1,4 +1,4 @@
-# Kanban app - Cerebral+Baobab port
+# Kanban app - Cerebral + Baobab port
 
 This repository contains [Cerebral](christianalfoni.com/cerebral) port of [SurviveJS - Webpack and React](http://survivejs.com/) Kanban example. It uses [Baobab](https://github.com/Yomguithereal/baobab) for dealing with state.
 
