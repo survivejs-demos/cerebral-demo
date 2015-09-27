@@ -23,7 +23,7 @@ controller.signal('laneCreated', (lane) => {
   model.tree.select('lanes').push(lane);
 });
 controller.signal('laneUpdated', ({id, name}) => {
-  console.log('update lane', id, name);
+  model.tree.select('lanes', {id}).set('name', name);
 });
 controller.signal('laneDeleted', (id) => {
   console.log('delete lane', id);
@@ -43,7 +43,7 @@ controller.signal('noteCreated', ({laneId, note}) => {
   laneNotes.push(note.id);
 });
 controller.signal('noteUpdated', ({id, task}) => {
-  console.log('update note', id, task);
+  model.tree.select('notes', {id}).set('task', task);
 });
 controller.signal('noteDeleted', ({laneId, noteId}) => {
   console.log('delete note', laneId, noteId);

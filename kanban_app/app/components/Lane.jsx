@@ -33,6 +33,7 @@ export default class Lane extends React.Component {
     const id = props.id;
 
     this.addNote = this.addNote.bind(this, id);
+    this.editNote = this.editNote.bind(this);
     this.deleteNote = this.deleteNote.bind(this, id);
     this.editName = this.editName.bind(this, id);
   }
@@ -62,12 +63,9 @@ export default class Lane extends React.Component {
       laneId,
       note: {task: 'New task'}
     });
-
-    //NoteActions.create({task: 'New task'});
-    //LaneActions.attachToLane({laneId});
   }
   editNote(id, task) {
-    this.props.signals.noteUpdated({id, task});
+    this.props.signals.noteUpdated.sync({id, task});
 
     //NoteActions.update({id, task});
   }
@@ -78,8 +76,10 @@ export default class Lane extends React.Component {
     //LaneActions.detachFromLane({laneId, noteId});
   }
   editName(id, name) {
+    console.log('edit name', id, name);
+
     if(name) {
-      this.props.signals.laneUpdated({id, name});
+      this.props.signals.laneUpdated.sync({id, name});
     }
     else {
       this.props.signals.laneDeleted(id);
