@@ -1,3 +1,4 @@
+import uuid from 'node-uuid';
 import Controller from 'cerebral';
 import Model from 'cerebral-baobab';
 
@@ -15,7 +16,10 @@ model.tree.on('update', (e) => {
 const controller = Controller(model);
 
 controller.signal('laneCreated', (lane) => {
-  console.log('lane', lane);
+  lane.id = uuid.v4();
+  lane.notes = lane.notes || [];
+
+  model.tree.select('lanes').push(lane);
 });
 
 export default controller;
