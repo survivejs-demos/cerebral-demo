@@ -1,6 +1,6 @@
 import React from 'react';
 import {Decorator as Cerebral} from 'cerebral-react';
-//import Notes from './Notes.jsx';
+import Notes from './Notes.jsx';
 import Editable from './Editable.jsx';
 import {DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
@@ -23,7 +23,8 @@ const noteTarget = {
   connectDropTarget: connect.dropTarget()
 }))
 @Cerebral({
-  lanes: ['lanes']
+  lanes: ['lanes'],
+  allNotes: ['notes']
 })
 export default class Lane extends React.Component {
   constructor(props) {
@@ -36,7 +37,7 @@ export default class Lane extends React.Component {
     this.editName = this.editName.bind(this, id);
   }
   render() {
-    const {connectDropTarget, id, name, notes, ...props} = this.props;
+    const {connectDropTarget, id, name, allNotes, notes, ...props} = this.props;
 
     return connectDropTarget(
       <div {...props}>
@@ -47,16 +48,17 @@ export default class Lane extends React.Component {
             <button onClick={this.addNote}>+</button>
           </div>
         </div>
-        {/* TODO: filter visible notes based on ids
-          <Notes
-            onEdit={this.editNote}
-            onDelete={this.deleteNote} />
-        */}
+        <Notes
+          items={notes.map((id) =>
+            allNotes[allNotes.findIndex((note) => note.id === id)]
+          )}
+          onEdit={this.editNote}
+          onDelete={this.deleteNote} />
       </div>
     );
   }
   addNote(laneId) {
-    this.props.signals.noteCreated({
+    this.props.signals.noteCreated.sync({
       laneId,
       note: {task: 'New task'}
     });

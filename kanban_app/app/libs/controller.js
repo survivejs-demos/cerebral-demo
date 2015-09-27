@@ -31,8 +31,6 @@ controller.signal('laneDeleted', (id) => {
 
 // notes
 controller.signal('noteCreated', ({laneId, note}) => {
-  console.log('create note', laneId, note);
-
   note.id = uuid.v4();
 
   model.tree.select('notes').push(note);
