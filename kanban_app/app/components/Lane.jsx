@@ -1,9 +1,6 @@
-import AltContainer from 'alt/AltContainer';
 import React from 'react';
-import Notes from './Notes.jsx';
-import NoteActions from '../actions/NoteActions';
-import NoteStore from '../stores/NoteStore';
-import LaneActions from '../actions/LaneActions';
+import {Decorator as Cerebral} from 'cerebral-react';
+//import Notes from './Notes.jsx';
 import Editable from './Editable.jsx';
 import {DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
@@ -25,6 +22,9 @@ const noteTarget = {
 @DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
 }))
+@Cerebral({
+  lanes: ['lanes']
+})
 export default class Lane extends React.Component {
   constructor(props) {
     super(props);
@@ -47,36 +47,33 @@ export default class Lane extends React.Component {
             <button onClick={this.addNote}>+</button>
           </div>
         </div>
-        <AltContainer
-          stores={[NoteStore]}
-          inject={ {
-            items: () => NoteStore.get(notes)
-          } }
-        >
+        {/* TODO: filter visible notes based on ids
           <Notes
             onEdit={this.editNote}
             onDelete={this.deleteNote} />
-        </AltContainer>
+        */}
       </div>
     );
   }
   addNote(laneId) {
-    NoteActions.create({task: 'New task'});
-    LaneActions.attachToLane({laneId});
+    //NoteActions.create({task: 'New task'});
+    //LaneActions.attachToLane({laneId});
   }
   editNote(id, task) {
-    NoteActions.update({id, task});
+    //NoteActions.update({id, task});
   }
   deleteNote(laneId, noteId) {
-    NoteActions.delete(noteId);
-    LaneActions.detachFromLane({laneId, noteId});
+    //NoteActions.delete(noteId);
+    //LaneActions.detachFromLane({laneId, noteId});
   }
   editName(id, name) {
+    /*
     if(name) {
       LaneActions.update({id, name});
     }
     else {
       LaneActions.delete(id);
     }
+    */
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Decorator as Cerebral} from 'cerebral-react';
-//import Lanes from './Lanes.jsx';
+import Lanes from './Lanes.jsx';
 import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd/modules/backends/HTML5';
 
@@ -16,7 +16,7 @@ export default class App extends React.Component {
     return (
       <div>
         <button className="add-lane" onClick={this.addItem}>+</button>
-        {/* <Lanes /> */}
+        <Lanes />
       </div>
     );
   }
