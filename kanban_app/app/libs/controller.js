@@ -15,6 +15,7 @@ model.tree.on('update', (e) => {
 
 const controller = Controller(model);
 
+// lanes
 controller.signal('laneCreated', (lane) => {
   lane.id = uuid.v4();
   lane.notes = lane.notes || [];
@@ -28,8 +29,20 @@ controller.signal('laneDeleted', (id) => {
   console.log('delete lane', id);
 });
 
+// notes
 controller.signal('noteCreated', ({laneId, note}) => {
   console.log('create note', laneId, note);
+
+  note.id = uuid.v4();
+
+  model.tree.select('notes').push(note);
+  const laneNotes = model.tree.select('lanes', {
+    id: laneId
+  }, 'notes');
+
+  // it would be a good idea to check that the lane exists
+  // before doing this
+  laneNotes.push(note.id);
 });
 controller.signal('noteUpdated', ({id, task}) => {
   console.log('update note', id, task);
