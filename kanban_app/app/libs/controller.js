@@ -12,4 +12,10 @@ model.tree.on('update', (e) => {
   console.log('tree updated', e);
 });
 
-export default Controller(model);
+const controller = Controller(model);
+
+controller.signal('laneCreated', (lane) => {
+  console.log('lane', lane);
+});
+
+export default controller;
