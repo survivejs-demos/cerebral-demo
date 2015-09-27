@@ -52,5 +52,8 @@ controller.signal('noteDeleted', ({laneId, noteId}) => {
   model.tree.select('lanes', {id: laneId}, 'notes', noteId).unset();
   model.tree.select('notes', {id: noteId}).unset();
 });
+controller.signal('noteMoved', ({sourceId, targetId}) => {
+  console.log('note moved', sourceId, targetId);
+});
 
 export default controller;

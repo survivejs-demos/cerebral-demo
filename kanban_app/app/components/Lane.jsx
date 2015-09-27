@@ -11,10 +11,14 @@ const noteTarget = {
     const sourceId = sourceProps.id;
 
     if(!targetProps.notes.length) {
+      console.log('move note to a lane now');
+      // XXXXX
+      /*
       LaneActions.attachToLane({
         laneId: targetProps.id,
         noteId: sourceId
       });
+      */
     }
   }
 };
