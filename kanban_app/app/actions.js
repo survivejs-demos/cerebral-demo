@@ -31,8 +31,6 @@ export default {
     const note = state.get(['data', 'notes', noteId]);
     const currentLane = state.get(['data', 'lanes', note.laneId]);
     const noteIdIndex = currentLane.notes.indexOf(noteId);
-
-    console.log('noteIdIndex', noteIdIndex);
     state.splice(['data', 'lanes', note.laneId, 'notes'], noteIdIndex, 1);
     state.push(['data', 'lanes', laneId, 'notes'], noteId);
   },
