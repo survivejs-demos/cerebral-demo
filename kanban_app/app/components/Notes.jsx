@@ -29,7 +29,7 @@ export default class Notes extends React.Component {
     );
   }
   moveNote({sourceNote, targetNote}) {
-    this.props.signals.noteMoved({sourceNote, targetNote});
+    this.props.signals.noteMoved.sync({sourceNote, targetNote});
   }
   attachNote({laneId, noteId}) {
     this.props.signals.noteAttachedToLane.sync({laneId, noteId});

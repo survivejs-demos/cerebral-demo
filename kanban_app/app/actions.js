@@ -1,4 +1,5 @@
 import uuid from 'node-uuid';
+import update from 'react/lib/update';
 
 export default {
   displayAllLanes(inut, state) {
@@ -60,19 +61,31 @@ export default {
     state.unset(['data', 'notes', noteId]);
   },
 
-  // Would be better to pass the notes here, as they
-  // have reference to their respective lanes. note.laneId
   moveNote({sourceNote, targetNote}, state) {
     const sourceNotesPath = ['data', 'lanes', sourceNote.laneId, 'notes'];
-    const sourceNoteIndex = state.get(sourceNotesPath).indexOf(sourceNote.id);
+    const sourceNotes = state.get(sourceNotesPath);
+    const sourceNoteIndex = sourceNotes.indexOf(sourceNote.id);
 
-    console.log('move note', sourceNote, targetNote);
+    if(sourceNote.laneId === targetNote.laneId) {
+      const targetNoteIndex = sourceNotes.indexOf(targetNote.id);
+      const notes = update(sourceNotes, {
+        $splice: [
+          [sourceNoteIndex, 1],
+          [targetNoteIndex, 0, sourceNote.id]
+        ]
+      });
 
-    // XXXXX: this needs to deal with two separate cases
-    // 1. moving within the same lane
-    // 2. moving from a lane to another (note dragged on top of another note at another lane)
+      console.log('source notes', sourceNotes, 'new notes', notes);
 
-    state.splice(sourceNotesPath, sourceNoteIndex, 1);
-    state.push(['data', 'lanes', targetNote.laneId, 'notes'], sourceNote.id);
+      // XXXXX: why doesn't this trigger render?
+      state.set(sourceNotes, notes);
+    }
+    else {
+      return console.log('separate case');
+
+      // XXXXX: dealing with this later. this needs to update note lane refs as well
+      state.splice(sourceNotesPath, sourceNoteIndex, 1);
+      state.push(['data', 'lanes', targetNote.laneId, 'notes'], sourceNote.id);
+    }
   },
 };
