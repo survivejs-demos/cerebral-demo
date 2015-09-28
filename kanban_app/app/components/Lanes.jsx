@@ -3,7 +3,7 @@ import {Decorator as Cerebral} from 'cerebral-react';
 import Lane from './Lane.jsx';
 
 @Cerebral({
-  lanes: ['lanes']
+  lanes: ['lanes', 'list']
 })
 export default class Lanes extends React.Component {
   render() {

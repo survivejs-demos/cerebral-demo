@@ -46,7 +46,7 @@
     "array.prototype.findindex": "^1.0.0",
     "baobab": "^2.0.0-dev15",
     "cerebral": "^0.19.4",
-    "cerebral-baobab": "^0.2.2",
+    "cerebral-baobab": "^0.2.3",
     "cerebral-react": "^0.2.0",
     "node-uuid": "^1.4.3",
     "react": "^0.14.0-rc1",

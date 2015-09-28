@@ -9,7 +9,6 @@ import HTML5Backend from 'react-dnd/modules/backends/HTML5';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-
     this.addItem = this.addItem.bind(this);
   }
   render() {

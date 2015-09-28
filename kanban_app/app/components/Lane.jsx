@@ -5,15 +5,16 @@ import Editable from './Editable.jsx';
 import {DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
 
+let prevTargetId = null;
 const noteTarget = {
   hover(targetProps, monitor) {
-    const sourceProps = monitor.getItem();
-    const sourceId = sourceProps.id;
 
-    if(!targetProps.notes.length) {
-      sourceProps.signals.attachNoteToLane.sync({
+    const sourceProps = monitor.getItem();
+    if (sourceProps.onAttach && (!prevTargetId || (prevTargetId !== targetProps.id && !targetProps.notes.length))) {
+      prevTargetId = targetProps.id;
+      sourceProps.onAttach({
         laneId: targetProps.id,
-        noteId: sourceId
+        noteId: sourceProps.id,
       });
     }
   }
@@ -22,10 +23,7 @@ const noteTarget = {
 @DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
 }))
-@Cerebral({
-  lanes: ['lanes'],
-  allNotes: ['notes']
-})
+@Cerebral()
 export default class Lane extends React.Component {
   constructor(props) {
     super(props);
@@ -38,7 +36,7 @@ export default class Lane extends React.Component {
     this.editName = this.editName.bind(this, id);
   }
   render() {
-    const {connectDropTarget, id, name, allNotes, notes, ...props} = this.props;
+    const {connectDropTarget, id, name, notes, ...props} = this.props;
 
     return connectDropTarget(
       <div {...props}>
@@ -50,9 +48,7 @@ export default class Lane extends React.Component {
           </div>
         </div>
         <Notes
-          items={notes.map((id) =>
-            allNotes[allNotes.findIndex((note) => note.id === id)]
-          ).filter((a) => a)}
+          items={notes}
           onEdit={this.editNote}
           onDelete={this.deleteNote} />
       </div>
@@ -65,17 +61,17 @@ export default class Lane extends React.Component {
     });
   }
   editNote(id, task) {
-    this.props.signals.noteUpdated.sync({id, task});
+    this.props.signals.noteUpdated({id, task});
   }
   deleteNote(laneId, noteId) {
-    this.props.signals.noteDeleted.sync({laneId, noteId});
+    this.props.signals.noteDeleted({laneId, noteId});
   }
   editName(id, name) {
     if(name) {
-      this.props.signals.laneUpdated.sync({id, name});
+      this.props.signals.laneUpdated({id, name});
     }
     else {
-      this.props.signals.laneDeleted.sync(id);
+      this.props.signals.laneDeleted({id});
     }
   }
 }

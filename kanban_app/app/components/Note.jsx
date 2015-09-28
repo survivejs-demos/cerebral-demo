@@ -5,26 +5,24 @@ import ItemTypes from '../constants/itemTypes';
 
 const noteSource = {
   beginDrag(props) {
-    return {
-      id: props.id,
-      signals: props.signals
-    };
-  }
+    return props.note;
+  },
 };
 
+let prevTarget = null;
 const noteTarget = {
   hover(targetProps, monitor) {
-    const targetId = targetProps.id;
-    const sourceProps = monitor.getItem();
-    const sourceId = sourceProps.id;
 
-    if(sourceId !== targetId) {
-      targetProps.onMove({sourceId, targetId});
+    const sourceNote = monitor.getItem();
+    if (!prevTarget || (prevTarget !== targetProps.note && sourceNote.id !== targetProps.note.id)) {
+      prevTarget = targetProps.note;
+      const targetNote = targetProps.note;
+      targetProps.onMove({sourceNote, targetNote});
     }
-  }
+
+  },
 };
 
-@Cerebral({})
 @DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
   connectDragSource: connect.dragSource()
 }))
