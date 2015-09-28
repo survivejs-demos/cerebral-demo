@@ -16,7 +16,22 @@ export default (controller) => {
     // XXX: it would be a good idea to seek and destroy possible
     // associated notes. now they remain hanging in the memory
   });
-  controller.signal('moveNoteToLane', ({laneId, noteId}) => {
-    console.log('move note to lane', laneId, noteId);
+  controller.signal('attachNoteToLane', ({laneId, noteId}, state) => {
+    const removeLane = state.get('lanes').find(
+      (lane) => lane.notes.indexOf(noteId) >= 0
+    );
+    const removeLaneId = removeLane.id;
+    const removeNoteIndex = removeLane.notes.findIndex(
+      (note) => note === noteId
+    );
+
+    if(removeLaneId) {
+      state.unset(['lanes', {id: removeLaneId}, 'notes', removeNoteIndex]);
+    }
+
+    // XXX: this would be neater. how to map id to index, though?
+    //state.unset(['lanes', 'notes', noteIndex}]);
+
+    state.push(['lanes', {id: laneId}, 'notes'], noteId);
   });
 }

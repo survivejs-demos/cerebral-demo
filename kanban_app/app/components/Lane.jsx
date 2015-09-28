@@ -11,7 +11,7 @@ const noteTarget = {
     const sourceId = sourceProps.id;
 
     if(!targetProps.notes.length) {
-      sourceProps.signals.moveNoteToLane.sync({
+      sourceProps.signals.attachNoteToLane.sync({
         laneId: targetProps.id,
         noteId: sourceId
       });
