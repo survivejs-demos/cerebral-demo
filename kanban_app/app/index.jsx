@@ -12,16 +12,16 @@ import storage from './libs/storage';
 import laneSignals from './signals/lane';
 import noteSignals from './signals/note';
 
-// TODO: load initial data from localStorage
-// it would be good to validate initial data now
-// if it's broken somehow, it's easy to end up with a broken app
-const model = Model({
+const APP_STORE = 'cerebral_app';
+
+// XXX: it would be good to validate initial data now
+// if it's invalid somehow, it's easy to end up with a broken app
+const model = Model(storage.get(APP_STORE) || {
   lanes: [],
   notes: []
 });
 model.tree.on('update', (e) => {
-  // TODO: write the new state to localStorage
-  console.log('tree updated', e);
+  storage.set(APP_STORE, e.data.currentData);
 });
 
 const controller = Controller(model);

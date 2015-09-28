@@ -6,7 +6,7 @@ export default (controller) => {
 
     state.push('notes', note);
 
-    // it would be a good idea to check that the lane exists
+    // XXX: it would be a good idea to check that the lane exists
     // before doing this
     state.push(['lanes', {id: laneId}, 'notes'], note.id);
   });
