@@ -5,18 +5,15 @@ import Editable from './Editable.jsx';
 import {DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
 
-let prevTargetId = null;
 const noteTarget = {
   hover(targetProps, monitor) {
-
-    // I do not quite understand what data is coming in here, it does not
-    // always seem to be the same?
     const sourceProps = monitor.getItem();
-    if (sourceProps.onAttach && (!prevTargetId || (prevTargetId !== targetProps.id && !targetProps.notes.length))) {
-      prevTargetId = targetProps.id;
+    const sourceId = sourceProps.note.id;
+
+    if(!targetProps.notes.length) {
       sourceProps.onAttach({
         laneId: targetProps.id,
-        noteId: sourceProps.id,
+        noteId: sourceId
       });
     }
   }

@@ -24,5 +24,4 @@ export default function (controller) {
   controller.signal('noteUpdated', updateNote);
   controller.signal('noteDeleted', deleteNote);
   controller.signal('noteMoved', moveNote);
-
 };

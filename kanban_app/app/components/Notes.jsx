@@ -10,6 +10,7 @@ export default class Notes extends React.Component {
 
     this.renderNote = this.renderNote.bind(this);
     this.moveNote = this.moveNote.bind(this);
+    this.attachNote = this.attachNote.bind(this);
   }
   render() {
     const notes = this.props.items;
@@ -17,7 +18,9 @@ export default class Notes extends React.Component {
   }
   renderNote(note) {
     return (
-      <Note className="note" onMove={this.moveNote} onAttach={this.props.signals.noteAttachedToLane} note={note} key={`note${note.id}`}>
+      <Note className="note"
+        onMove={this.moveNote} onAttach={this.attachNote}
+        note={note} key={`note${note.id}`}>
         <Editable
           value={note.task}
           onEdit={this.props.onEdit.bind(null, note.id)}
@@ -25,8 +28,10 @@ export default class Notes extends React.Component {
       </Note>
     );
   }
-
   moveNote({sourceNote, targetNote}) {
     this.props.signals.noteMoved({sourceNote, targetNote});
+  }
+  attachNote({laneId, noteId}) {
+    this.props.signals.noteAttachedToLane.sync({laneId, noteId});
   }
 }

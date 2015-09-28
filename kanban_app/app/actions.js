@@ -24,6 +24,8 @@ export default {
   },
 
   deleteLane({id}, state) {
+    // XXXXX: fails with
+    // Uncaught TypeError: Cannot read property 'id' of undefined
     state.unset(['data', 'lanes', id]);
   },
 
@@ -31,6 +33,12 @@ export default {
     const note = state.get(['data', 'notes', noteId]);
     const currentLane = state.get(['data', 'lanes', note.laneId]);
     const noteIdIndex = currentLane.notes.indexOf(noteId);
+
+    if(note.laneId === laneId) {
+      return;
+    }
+
+    state.set(['data', 'notes', noteId, 'laneId'], laneId);
     state.splice(['data', 'lanes', note.laneId, 'notes'], noteIdIndex, 1);
     state.push(['data', 'lanes', laneId, 'notes'], noteId);
   },
@@ -57,6 +65,13 @@ export default {
   moveNote({sourceNote, targetNote}, state) {
     const sourceNotesPath = ['data', 'lanes', sourceNote.laneId, 'notes'];
     const sourceNoteIndex = state.get(sourceNotesPath).indexOf(sourceNote.id);
+
+    console.log('move note', sourceNote, targetNote);
+
+    // XXXXX: this needs to deal with two separate cases
+    // 1. moving within the same lane
+    // 2. moving from a lane to another (note dragged on top of another note at another lane)
+
     state.splice(sourceNotesPath, sourceNoteIndex, 1);
     state.push(['data', 'lanes', targetNote.laneId, 'notes'], sourceNote.id);
   },

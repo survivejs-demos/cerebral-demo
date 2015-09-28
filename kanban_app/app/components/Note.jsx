@@ -5,21 +5,21 @@ import ItemTypes from '../constants/itemTypes';
 
 const noteSource = {
   beginDrag(props) {
-    return props.note;
+    return {
+      note: props.note,
+      onAttach: props.onAttach
+    }
   },
 };
 
-let prevTarget = null;
 const noteTarget = {
   hover(targetProps, monitor) {
+    const sourceNote = monitor.getItem().note;
+    const targetNote = targetProps.note;
 
-    const sourceNote = monitor.getItem();
-    if (!prevTarget || (prevTarget !== targetProps.note && sourceNote.id !== targetProps.note.id)) {
-      prevTarget = targetProps.note;
-      const targetNote = targetProps.note;
+    if(sourceNote.id !== targetNote.id) {
       targetProps.onMove({sourceNote, targetNote});
     }
-
   },
 };
 
