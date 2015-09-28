@@ -15,8 +15,13 @@ export default (controller) => {
     state.set(['notes', {id}, 'task'], task);
   });
   controller.signal('noteDeleted', ({laneId, noteId}, state) => {
-    // XXX: this doesn't work. it should seek note id first! fails silently!!!
-    state.unset(['lanes', {id: laneId}, 'notes', noteId]);
+    const lane = state.get('lanes', {id: laneId});
+    const noteIndex = lane.notes.findIndex(
+      (note) => note === noteId
+    );
+
+    // XXX: fails silently if fails to remove!!!
+    state.unset(['lanes', {id: laneId}, 'notes', noteIndex]);
 
     state.unset(['notes', {id: noteId}]);
   });
