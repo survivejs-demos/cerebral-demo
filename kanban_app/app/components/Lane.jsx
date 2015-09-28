@@ -63,7 +63,7 @@ export default class Lane extends React.Component {
     );
   }
   addNote(laneId) {
-    this.props.signals.noteCreated.sync({
+    this.props.signals.noteCreated({
       laneId,
       note: {task: 'New task'}
     });
