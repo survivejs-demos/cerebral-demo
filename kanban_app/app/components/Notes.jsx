@@ -17,7 +17,6 @@ export default class Notes extends React.Component {
     return <ul className="notes">{notes.map(this.renderNote)}</ul>;
   }
   renderNote(note) {
-    // onMove={LaneActions.move}
     return (
       <Note className="note" onMove={this.moveNote}
         id={note.id} key={`note${note.id}`}>
