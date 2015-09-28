@@ -9,6 +9,8 @@ let prevTargetId = null;
 const noteTarget = {
   hover(targetProps, monitor) {
 
+    // I do not quite understand what data is coming in here, it does not
+    // always seem to be the same?
     const sourceProps = monitor.getItem();
     if (sourceProps.onAttach && (!prevTargetId || (prevTargetId !== targetProps.id && !targetProps.notes.length))) {
       prevTargetId = targetProps.id;
