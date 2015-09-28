@@ -28,6 +28,6 @@ export default class Notes extends React.Component {
     );
   }
   moveNote({sourceId, targetId}) {
-    this.props.signals.noteMoved({sourceId, targetId});
+    this.props.signals.noteMoved.sync({sourceId, targetId});
   }
 }
