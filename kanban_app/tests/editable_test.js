@@ -18,7 +18,7 @@ describe('Editable', () => {
 
     const valueComponent = findRenderedDOMComponentWithClass(component, 'value');
 
-    assert.equal(valueComponent.getDOMNode().textContent, value);
+    assert.equal(valueComponent.textContent, value);
   });
 
   it('enters edit mode', () => {
@@ -32,7 +32,7 @@ describe('Editable', () => {
 
     const input = findRenderedDOMComponentWithTag(component, 'input');
 
-    assert.equal(input.getDOMNode().value, value);
+    assert.equal(input.value, value);
   });
 
   it('triggers onEdit', () => {
