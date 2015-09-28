@@ -43,7 +43,7 @@
   "dependencies": {
     "array.prototype.find": "^1.0.0",
     "array.prototype.findindex": "^1.0.0",
-    "baobab": "^2.0.0-dev15",
+    "baobab": "2.0.0-dev15",
     "cerebral": "^0.19.4",
     "cerebral-baobab": "^0.2.3",
     "cerebral-react": "^0.2.0",
