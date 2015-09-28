@@ -1,11 +1,13 @@
 import React from 'react';
+import {Decorator as Cerebral} from 'cerebral-react';
 import {DragSource, DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
 
 const noteSource = {
   beginDrag(props) {
     return {
-      id: props.id
+      id: props.id,
+      signals: props.signals
     };
   }
 };
@@ -22,6 +24,7 @@ const noteTarget = {
   }
 };
 
+@Cerebral({})
 @DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
   connectDragSource: connect.dragSource()
 }))

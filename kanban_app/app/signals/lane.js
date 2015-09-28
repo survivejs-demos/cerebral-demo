@@ -16,4 +16,7 @@ export default (controller) => {
     // XXX: it would be a good idea to seek and destroy possible
     // associated notes. now they remain hanging in the memory
   });
+  controller.signal('moveNoteToLane', ({laneId, noteId}) => {
+    console.log('move note to lane', laneId, noteId);
+  });
 }
