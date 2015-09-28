@@ -1,4 +1,5 @@
 import uuid from 'node-uuid';
+import update from 'react/lib/update';
 
 export default (controller) => {
   controller.signal('noteCreated', ({laneId, note}, state) => {
@@ -31,14 +32,14 @@ export default (controller) => {
     const targetNoteIndex = targetLane.notes.indexOf(targetId);
 
     if(sourceLane === targetLane) {
-      /*
-      sourceLane.notes = update(sourceLane.notes, {
+      const newNotes = update(sourceLane.notes, {
         $splice: [
           [sourceNoteIndex, 1],
           [targetNoteIndex, 0, sourceId]
         ]
       });
-       */
+
+      state.set(['lanes', {id: sourceLane.id}, 'notes'], newNotes);
     }
     else {
       // get rid of the source
