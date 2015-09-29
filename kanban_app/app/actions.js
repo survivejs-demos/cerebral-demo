@@ -1,5 +1,4 @@
 import uuid from 'node-uuid';
-import update from 'react/lib/update';
 
 export default {
   displayAllLanes(inut, state) {
