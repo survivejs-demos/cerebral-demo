@@ -14,9 +14,6 @@ export default class Notes extends React.Component {
   }
   render() {
     const notes = this.props.items;
-
-    console.log('rendering notes', notes);
-
     return <ul className="notes">{notes.map(this.renderNote)}</ul>;
   }
   renderNote(note) {
@@ -32,7 +29,7 @@ export default class Notes extends React.Component {
     );
   }
   moveNote({sourceNote, targetNote}) {
-    this.props.signals.noteMoved.sync({sourceNote, targetNote});
+    this.props.signals.noteMoved({sourceNote, targetNote});
   }
   attachNote({laneId, noteId}) {
     this.props.signals.noteAttachedToLane.sync({laneId, noteId});

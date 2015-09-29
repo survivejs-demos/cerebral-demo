@@ -27,6 +27,8 @@ export default {
   deleteLane({id}, state) {
     // XXXXX: fails with
     // Uncaught TypeError: Cannot read property 'id' of undefined
+    const indexOfLane = state.get(['lanes', 'ids']).indexOf(id);
+    state.splice(['lanes', 'ids'], indexOfLane, 1);
     state.unset(['data', 'lanes', id]);
   },
 
@@ -68,24 +70,16 @@ export default {
 
     if(sourceNote.laneId === targetNote.laneId) {
       const targetNoteIndex = sourceNotes.indexOf(targetNote.id);
-      const notes = update(sourceNotes, {
-        $splice: [
-          [sourceNoteIndex, 1],
-          [targetNoteIndex, 0, sourceNote.id]
-        ]
-      });
+      state.splice(sourceNotesPath, sourceNoteIndex, 1);
+      state.splice(sourceNotesPath, targetNoteIndex, 0, sourceNote.id);
 
-      console.log('source notes', sourceNotes, 'new notes', notes);
-
-      // XXXXX: why doesn't this trigger render?
-      state.set(sourceNotes, notes);
     }
     else {
-      return console.log('separate case');
 
-      // XXXXX: dealing with this later. this needs to update note lane refs as well
       state.splice(sourceNotesPath, sourceNoteIndex, 1);
+      state.set(['data', 'notes', sourceNote.id, 'laneId'], targetNote.laneId);
       state.push(['data', 'lanes', targetNote.laneId, 'notes'], sourceNote.id);
+
     }
   },
 };

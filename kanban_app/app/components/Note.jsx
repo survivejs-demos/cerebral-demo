@@ -12,13 +12,18 @@ const noteSource = {
   },
 };
 
+// You need this to prevent firing off insanse
+// amounts of signals. Should only move once
+let lastMovedTo = null;
 const noteTarget = {
   hover(targetProps, monitor) {
     const sourceNote = monitor.getItem().note;
     const targetNote = targetProps.note;
-
-    if(sourceNote.id !== targetNote.id) {
-      targetProps.onMove({sourceNote, targetNote});
+    if (lastMovedTo !== targetNote.id) {
+      lastMovedTo = targetNote.id;
+      if(sourceNote.id !== targetNote.id) {
+        targetProps.onMove({sourceNote, targetNote});
+      }
     }
   },
 };

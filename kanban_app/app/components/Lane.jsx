@@ -66,10 +66,10 @@ export default class Lane extends React.Component {
     this.props.signals.noteDeleted({laneId, noteId});
   }
   editName(id, name) {
+console.log('id', id);
     if(name) {
       this.props.signals.laneUpdated({id, name});
-    }
-    else {
+    } else {
       this.props.signals.laneDeleted({id});
     }
   }
