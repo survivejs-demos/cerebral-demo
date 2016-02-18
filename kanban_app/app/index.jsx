@@ -1,16 +1,12 @@
-import 'array.prototype.find';
-import 'array.prototype.findindex';
-import './main.css';
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Controller from 'cerebral';
-import Model from 'cerebral-baobab';
-import {Container} from 'cerebral-react';
+import Model from 'cerebral-model-baobab';
+import {Container} from 'cerebral-view-react';
+import Recorder from 'cerebral-module-recorder';
 import App from './components/App.jsx';
+import Kanban from './modules/Kanban';
 import storage from './libs/storage';
-
-import signals from './signals';
 
 const APP_STORE = 'cerebral_app';
 
@@ -35,6 +31,7 @@ const model = Model({
           const lane = data.lanes[laneId];
           return {
             id: lane.id,
+            editing: lane.editing,
             name: lane.name,
             notes: lane.notes.map((noteId) => data.notes[noteId])
           };
@@ -46,18 +43,15 @@ const model = Model({
 
 const controller = Controller(model);
 
+controller.addModules({
+  kanban: Kanban(),
+  recorder: Recorder()
+});
+
 controller.on('signalEnd', () => {
   storage.set(APP_STORE, controller.get('data'));
 });
 
-signals(controller);
-
-main();
-
-function main() {
-  const app = document.createElement('div');
-
-  document.body.appendChild(app);
-
-  ReactDOM.render(<Container controller={controller} app={App} />, app);
-}
+ReactDOM.render(
+  <Container controller={controller} app={App} />, document.getElementById('app')
+);

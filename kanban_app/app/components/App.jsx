@@ -1,16 +1,14 @@
 import React from 'react';
-import {Decorator as Cerebral} from 'cerebral-react';
+import {Decorator as Cerebral} from 'cerebral-view-react';
 import Lanes from './Lanes.jsx';
 import {DragDropContext} from 'react-dnd';
-import HTML5Backend from 'react-dnd/modules/backends/HTML5';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 @DragDropContext(HTML5Backend)
-@Cerebral({})
+@Cerebral({
+  kanban: ['kanban']
+})
 export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.addItem = this.addItem.bind(this);
-  }
   render() {
     return (
       <div>
@@ -19,7 +17,7 @@ export default class App extends React.Component {
       </div>
     );
   }
-  addItem() {
-    this.props.signals.laneCreated({name: 'New lane'});
-  }
+  addItem = () => {
+    this.props.signals.kanban.laneCreated({name: 'New lane'});
+  };
 }

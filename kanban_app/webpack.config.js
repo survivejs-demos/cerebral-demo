@@ -1,30 +1,49 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlwebpackPlugin = require('html-webpack-plugin');
-var merge = require('webpack-merge');
-var Clean = require('clean-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const merge = require('webpack-merge');
+const webpack = require('webpack');
+const NpmInstallPlugin = require('npm-install-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-var pkg = require('./package.json');
+const pkg = require('./package.json');
 
-var TARGET = process.env.npm_lifecycle_event;
-var ROOT_PATH = path.resolve(__dirname);
-var APP_PATH = path.resolve(ROOT_PATH, 'app');
-var BUILD_PATH = path.resolve(ROOT_PATH, 'build');
-var TEST_PATH = path.resolve(ROOT_PATH, 'test');
+const TARGET = process.env.npm_lifecycle_event;
+const PATHS = {
+  app: path.join(__dirname, 'app'),
+  build: path.join(__dirname, 'build'),
+  style: path.join(__dirname, 'app/main.css')
+};
 
-var common = {
-  entry: APP_PATH,
+process.env.BABEL_ENV = TARGET;
+
+const common = {
+  entry: {
+    app: PATHS.app,
+    style: PATHS.style
+  },
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   output: {
-    path: BUILD_PATH,
-    filename: 'bundle.js'
+    path: PATHS.build,
+    filename: '[name].js'
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        loaders: ['babel?cacheDirectory'],
+        include: PATHS.app
+      }
+    ]
   },
   plugins: [
-    new HtmlwebpackPlugin({
-      title: 'Kanban app'
+    new HtmlWebpackPlugin({
+      template: 'node_modules/html-webpack-template/index.ejs',
+      title: 'Kanban app',
+      appMountId: 'app',
+      inject: false
     })
   ]
 };
@@ -32,68 +51,70 @@ var common = {
 if(TARGET === 'start' || !TARGET) {
   module.exports = merge(common, {
     devtool: 'eval-source-map',
-    module: {
-      loaders: [
-        {
-          test: /\.css$/,
-          loaders: ['style', 'css']
-        },
-        {
-          test: /\.jsx?$/,
-          loaders: ['react-hot', 'babel'],
-          include: APP_PATH
-        }
-      ]
-    },
     devServer: {
       historyApiFallback: true,
       hot: true,
       inline: true,
-      progress: true
-    },
-    plugins: [
-      new webpack.HotModuleReplacementPlugin()
-    ]
-  });
-}
+      progress: true,
 
-if(TARGET === 'build') {
-  module.exports = merge(common, {
-    entry: {
-      app: APP_PATH,
-      vendor: Object.keys(pkg.dependencies)
+      // display only errors to reduce the amount of output
+      stats: 'errors-only',
+
+      // parse host and port from env so this is easy
+      // to customize
+      host: process.env.HOST,
+      port: process.env.PORT
     },
-    output: {
-      path: BUILD_PATH,
-      filename: '[name].[chunkhash].js'
-    },
-    devtool: 'source-map',
     module: {
       loaders: [
+        // Define development specific CSS setup
         {
           test: /\.css$/,
-          loader: ExtractTextPlugin.extract('style', 'css'),
-          include: APP_PATH
-        },
-        {
-          test: /\.jsx?$/,
-          loaders: ['babel'],
-          include: APP_PATH
+          loaders: ['style', 'css'],
+          include: PATHS.app
         }
       ]
     },
     plugins: [
-      new Clean(['build']),
-      new ExtractTextPlugin('styles.[chunkhash].css'),
-      new webpack.optimize.CommonsChunkPlugin(
-        'vendor',
-        '[name].[chunkhash].js'
-      ),
-      new webpack.DefinePlugin({
-        'process.env': {
-          // This affects react lib size
-          'NODE_ENV': JSON.stringify('production')
+      new webpack.HotModuleReplacementPlugin(),
+      new NpmInstallPlugin({
+        save: true // --save
+      })
+    ]
+  });
+}
+
+if(TARGET === 'build' || TARGET === 'stats') {
+  module.exports = merge(common, {
+    entry: {
+      vendor: Object.keys(pkg.dependencies)
+    },
+    output: {
+      path: PATHS.build,
+      filename: '[name].[chunkhash].js',
+      chunkFilename: '[chunkhash].js'
+    },
+    module: {
+      loaders: [
+        // Extract CSS during build
+        {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract('style', 'css'),
+          include: PATHS.app
         }
+      ]
+    },
+    plugins: [
+      new CleanPlugin([PATHS.build]),
+      // Output extracted CSS to a file
+      new ExtractTextPlugin('[name].[chunkhash].css'),
+      // Extract vendor and manifest files
+      new webpack.optimize.CommonsChunkPlugin({
+        names: ['vendor', 'manifest']
+      }),
+      // Setting DefinePlugin affects React library size!
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"production"'
       }),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -101,37 +122,5 @@ if(TARGET === 'build') {
         }
       })
     ]
-  });
-}
-
-if(TARGET === 'test' || TARGET === 'tdd') {
-  module.exports = merge(common, {
-    entry: {}, // karma will set this
-    output: {}, // karma will set this
-    devtool: 'inline-source-map',
-    resolve: {
-      alias: {
-        'app': APP_PATH
-      }
-    },
-    module: {
-      preLoaders: [
-        {
-          test: /\.jsx?$/,
-          loaders: ['isparta-instrumenter'],
-          include: APP_PATH
-        }
-      ],
-      loaders: [
-        {
-          test: /\.jsx?$/,
-          loaders: ['babel'],
-          include: [
-            APP_PATH,
-            TEST_PATH
-          ]
-        }
-      ]
-    }
   });
 }

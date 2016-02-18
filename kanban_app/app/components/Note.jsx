@@ -1,5 +1,5 @@
 import React from 'react';
-import {Decorator as Cerebral} from 'cerebral-react';
+import {Decorator as Cerebral} from 'cerebral-view-react';
 import {DragSource, DropTarget} from 'react-dnd';
 import ItemTypes from '../constants/itemTypes';
 
@@ -12,7 +12,7 @@ const noteSource = {
   },
 };
 
-// You need this to prevent firing off insanse
+// You need this to prevent firing off insane
 // amounts of signals. Should only move once
 let lastMovedTo = null;
 const noteTarget = {
@@ -36,11 +36,15 @@ const noteTarget = {
 }))
 export default class Note extends React.Component {
   render() {
-    const {connectDragSource, connectDropTarget,
-      onMove, id, ...props} = this.props;
+    const {connectDragSource, connectDropTarget, isDragging,
+      onMove, onAttach, note, editing, ...props} = this.props;
+    // Pass through if we are editing
+    const dragSource = editing ? a => a : connectDragSource;
 
-    return connectDragSource(connectDropTarget(
-      <li {...props}>{props.children}</li>
+    return dragSource(connectDropTarget(
+      <li style={{
+        opacity: isDragging ? 0 : 1
+      }} {...props}>{props.children}</li>
     ));
   }
 }

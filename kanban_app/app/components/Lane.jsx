@@ -1,5 +1,5 @@
 import React from 'react';
-import {Decorator as Cerebral} from 'cerebral-react';
+import {Decorator as Cerebral} from 'cerebral-view-react';
 import Notes from './Notes.jsx';
 import Editable from './Editable.jsx';
 import {DropTarget} from 'react-dnd';
@@ -10,9 +10,9 @@ const noteTarget = {
     const sourceProps = monitor.getItem();
     const sourceId = sourceProps.note.id;
 
-    if(!targetProps.notes.length) {
+    if(!targetProps.lane.notes.length) {
       sourceProps.onAttach({
-        laneId: targetProps.id,
+        laneId: targetProps.lane.id,
         noteId: sourceId
       });
     }
@@ -22,54 +22,83 @@ const noteTarget = {
 @DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
 }))
-@Cerebral()
+@Cerebral({
+  kanban: ['kanban']
+})
 export default class Lane extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const id = props.id;
-
-    this.addNote = this.addNote.bind(this, id);
-    this.editNote = this.editNote.bind(this);
-    this.deleteNote = this.deleteNote.bind(this, id);
-    this.editName = this.editName.bind(this, id);
-  }
   render() {
-    const {connectDropTarget, id, name, notes, ...props} = this.props;
+    const {connectDropTarget, lane, ...props} = this.props;
 
     return connectDropTarget(
       <div {...props}>
-        <div className="lane-header">
-          <Editable className="lane-name" value={name}
-            onEdit={this.editName} />
-          <div className="lane-add-note">
-            <button onClick={this.addNote}>+</button>
-          </div>
+      <div className="lane-header" onClick={this.activateLaneEdit}>
+        <div className="lane-add-note">
+          <button onClick={this.addNote}>+</button>
         </div>
+        <Editable className="lane-name" editing={lane.editing}
+          value={lane.name} onEdit={this.editName} />
+        <div className="lane-delete">
+          <button onClick={this.deleteLane}>x</button>
+        </div>
+      </div>
         <Notes
-          items={notes}
+          notes={lane.notes}
+          onValueClick={this.activateNoteEdit}
           onEdit={this.editNote}
           onDelete={this.deleteNote} />
       </div>
     );
   }
-  addNote(laneId) {
-    this.props.signals.noteCreated({
+  editNote = (id, task) => {
+    // Don't modify if trying set an empty value
+    if(!task.trim()) {
+      this.props.signals.kanban.noteUpdated({id, editing: false});
+
+      return;
+    }
+
+    this.props.signals.kanban.noteUpdated({id, task, editing: false});
+  };
+  addNote = (e) => {
+    e.stopPropagation();
+
+    const laneId = this.props.lane.id;
+
+    this.props.signals.kanban.noteCreated({
       laneId,
       note: {task: 'New task'}
     });
-  }
-  editNote(id, task) {
-    this.props.signals.noteUpdated({id, task});
-  }
-  deleteNote(laneId, noteId) {
-    this.props.signals.noteDeleted({laneId, noteId});
-  }
-  editName(id, name) {
-    if(name) {
-      this.props.signals.laneUpdated({id, name});
-    } else {
-      this.props.signals.laneDeleted({id});
+  };
+  deleteNote = (noteId, e) => {
+    e.stopPropagation();
+
+    const laneId = this.props.lane.id;
+
+    this.props.signals.kanban.noteDeleted({laneId, noteId});
+  };
+  editName = (name) => {
+    const laneId = this.props.lane.id;
+
+    // Don't modify if trying set an empty value
+    if(!name.trim()) {
+      this.props.signals.kanban.laneUpdated({id: laneId, editing: false});
+
+      return;
     }
-  }
+
+    this.props.signals.kanban.laneUpdated({id: laneId, name, editing: false});
+  };
+  deleteLane = () => {
+    const laneId = this.props.lane.id;
+
+    this.props.signals.kanban.laneDeleted({id: laneId});
+  };
+  activateLaneEdit = () => {
+    const id = this.props.lane.id;
+
+    this.props.signals.kanban.laneUpdated({id, editing: true});
+  };
+  activateNoteEdit = (id) => {
+    this.props.signals.kanban.noteUpdated({id, editing: true});
+  };
 }

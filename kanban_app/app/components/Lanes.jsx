@@ -1,5 +1,5 @@
 import React from 'react';
-import {Decorator as Cerebral} from 'cerebral-react';
+import {Decorator as Cerebral} from 'cerebral-view-react';
 import Lane from './Lane.jsx';
 
 @Cerebral({
@@ -12,6 +12,6 @@ export default class Lanes extends React.Component {
     return <div className="lanes">{lanes.map(this.renderLane)}</div>;
   }
   renderLane(lane) {
-    return <Lane className="lane" key={`lane${lane.id}`} {...lane} />;
+    return <Lane className="lane" key={lane.id} lane={lane} />;
   }
 }

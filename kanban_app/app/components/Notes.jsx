@@ -1,37 +1,37 @@
 import React from 'react';
-import {Decorator as Cerebral} from 'cerebral-react';
+import {Decorator as Cerebral} from 'cerebral-view-react';
 import Editable from './Editable.jsx';
 import Note from './Note.jsx';
 
-@Cerebral()
+@Cerebral({
+  kanban: ['kanban']
+})
 export default class Notes extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.renderNote = this.renderNote.bind(this);
-    this.moveNote = this.moveNote.bind(this);
-    this.attachNote = this.attachNote.bind(this);
-  }
   render() {
-    const notes = this.props.items;
+    const notes = this.props.notes;
+
     return <ul className="notes">{notes.map(this.renderNote)}</ul>;
   }
-  renderNote(note) {
+  renderNote = (note) => {
+    const {onValueClick, onEdit, onDelete} = this.props;
+
     return (
-      <Note className="note"
-        onMove={this.moveNote} onAttach={this.attachNote}
-        note={note} key={`note${note.id}`}>
+      <Note className="note" note={note} key={note.id}
+        editing={note.editing} onAttach={this.attachNote}
+        onMove={this.moveNote}>
         <Editable
+          editing={note.editing}
           value={note.task}
-          onEdit={this.props.onEdit.bind(null, note.id)}
-          onDelete={this.props.onDelete.bind(null, note.id)} />
+          onValueClick={onValueClick.bind(null, note.id)}
+          onEdit={onEdit.bind(null, note.id)}
+          onDelete={onDelete.bind(null, note.id)} />
       </Note>
     );
-  }
-  moveNote({sourceNote, targetNote}) {
-    this.props.signals.noteMoved({sourceNote, targetNote});
-  }
-  attachNote({laneId, noteId}) {
-    this.props.signals.noteAttachedToLane.sync({laneId, noteId});
-  }
+  };
+  moveNote = ({sourceNote, targetNote}) => {
+    this.props.signals.kanban.noteMoved({sourceNote, targetNote});
+  };
+  attachNote = ({laneId, noteId}) => {
+    this.props.signals.kanban.noteAttachedToLane.sync({laneId, noteId});
+  };
 }
