@@ -6,30 +6,37 @@ import ItemTypes from '../constants/itemTypes';
 const noteSource = {
   beginDrag(props) {
     return {
-      note: props.note,
+      id: props.id,
       onAttach: props.onAttach
     }
   },
+  isDragging(props, monitor) {
+    return props.id === monitor.getItem().id;
+  }
 };
 
 // You need this to prevent firing off insane
 // amounts of signals. Should only move once
-let lastMovedTo = null;
+let lastMovedToId = null;
 const noteTarget = {
   hover(targetProps, monitor) {
-    const sourceNote = monitor.getItem().note;
-    const targetNote = targetProps.note;
-    if (lastMovedTo !== targetNote.id) {
-      lastMovedTo = targetNote.id;
-      if(sourceNote.id !== targetNote.id) {
-        targetProps.onMove({sourceNote, targetNote});
+    const targetId = targetProps.id;
+    const sourceProps = monitor.getItem();
+    const sourceId = sourceProps.id;
+
+    if(lastMovedToId !== targetId) {
+      lastMovedToId = targetId;
+
+      if(sourceId !== targetId) {
+        targetProps.onMove({sourceId, targetId});
       }
     }
   },
 };
 
-@DragSource(ItemTypes.NOTE, noteSource, (connect) => ({
-  connectDragSource: connect.dragSource()
+@DragSource(ItemTypes.NOTE, noteSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
 }))
 @DropTarget(ItemTypes.NOTE, noteTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
@@ -37,7 +44,7 @@ const noteTarget = {
 export default class Note extends React.Component {
   render() {
     const {connectDragSource, connectDropTarget, isDragging,
-      onMove, onAttach, note, editing, ...props} = this.props;
+      onMove, onAttach, id, editing, ...props} = this.props;
     // Pass through if we are editing
     const dragSource = editing ? a => a : connectDragSource;
 

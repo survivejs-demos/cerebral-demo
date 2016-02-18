@@ -29,8 +29,9 @@ export function removeRelatedNotes({input, state}) {
 export function deleteLane({input, state}) {
   const indexOfLane = state.get(['lanes', 'ids']).indexOf(input.id);
 
+  // XXX: figure out why this leaves a reference hanging
   state.splice(['lanes', 'ids'], indexOfLane, 1);
-  state.unset(['data', 'lanes', input.id]);
+  state.unset(['data', 'lanes', input.id]); // XXX: does this work???
 };
 
 export function attachNoteToLane({input, state}) {
@@ -74,22 +75,21 @@ export function deleteNote({input, state}) {
 };
 
 export function moveNote({input, state}) {
-  const {sourceNote, targetNote} = input;
+  const {sourceId, targetId} = input;
+  const sourceLaneId = state.get(['data', 'notes', sourceId, 'laneId']);
+  const targetLaneId = state.get(['data', 'notes', targetId, 'laneId']);
+  const sourceLane = state.get(['data', 'lanes', sourceLaneId]);
+  const targetLane = state.get(['data', 'lanes', targetLaneId]);
+  const sourceNotesPath = ['data', 'lanes', sourceLaneId, 'notes'];
+  const targetNotesPath = ['data', 'lanes', targetLaneId, 'notes'];
 
-  const sourceNotesPath = ['data', 'lanes', sourceNote.laneId, 'notes'];
-  const sourceNotes = state.get(sourceNotesPath);
-  const sourceNoteIndex = sourceNotes.indexOf(sourceNote.id);
+  state.splice(sourceNotesPath, sourceLane.notes.indexOf(sourceId), 1);
 
-  // XXXXX: bugs out if you drag to another lane and then back
-  if(sourceNote.laneId === targetNote.laneId) {
-    const targetNoteIndex = sourceNotes.indexOf(targetNote.id);
-
-    state.splice(sourceNotesPath, sourceNoteIndex, 1);
-    state.splice(sourceNotesPath, targetNoteIndex, 0, sourceNote.id);
+  if(sourceLane === targetLane) {
+    state.splice(sourceNotesPath, sourceLane.notes.indexOf(targetId), 0, sourceId);
   }
   else {
-    state.splice(sourceNotesPath, sourceNoteIndex, 1);
-    state.set(['data', 'notes', sourceNote.id, 'laneId'], targetNote.laneId);
-    state.push(['data', 'lanes', targetNote.laneId, 'notes'], sourceNote.id);
+    state.splice(targetNotesPath, sourceLane.notes.indexOf(targetId), 0, sourceId);
+    state.set(['data', 'notes', sourceId, 'laneId'], targetLaneId);
   }
 };

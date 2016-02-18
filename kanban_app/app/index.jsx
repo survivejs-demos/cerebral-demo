@@ -29,13 +29,20 @@ const model = Model({
       get(data) {
         return data.ids.map((laneId) => {
           const lane = data.lanes[laneId];
+
+          // XXX: extra logic is needed because deleting lanes
+          // leaves references hanging
+          if(!lane.notes) {
+            return;
+          }
+
           return {
             id: lane.id,
             editing: lane.editing,
             name: lane.name,
             notes: lane.notes.map((noteId) => data.notes[noteId])
           };
-        });
+        }).filter(a => a);
       }
     })
   }

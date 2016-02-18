@@ -8,7 +8,7 @@ import ItemTypes from '../constants/itemTypes';
 const noteTarget = {
   hover(targetProps, monitor) {
     const sourceProps = monitor.getItem();
-    const sourceId = sourceProps.note.id;
+    const sourceId = sourceProps.id;
 
     if(!targetProps.lane.notes.length) {
       sourceProps.onAttach({

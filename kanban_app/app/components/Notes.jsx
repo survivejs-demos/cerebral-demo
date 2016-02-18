@@ -16,7 +16,7 @@ export default class Notes extends React.Component {
     const {onValueClick, onEdit, onDelete} = this.props;
 
     return (
-      <Note className="note" note={note} key={note.id}
+      <Note className="note" id={note.id} key={note.id}
         editing={note.editing} onAttach={this.attachNote}
         onMove={this.moveNote}>
         <Editable
@@ -28,8 +28,8 @@ export default class Notes extends React.Component {
       </Note>
     );
   };
-  moveNote = ({sourceNote, targetNote}) => {
-    this.props.signals.kanban.noteMoved({sourceNote, targetNote});
+  moveNote = ({sourceId, targetId}) => {
+    this.props.signals.kanban.noteMoved({sourceId, targetId});
   };
   attachNote = ({laneId, noteId}) => {
     this.props.signals.kanban.noteAttachedToLane.sync({laneId, noteId});
