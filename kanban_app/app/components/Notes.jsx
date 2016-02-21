@@ -4,7 +4,7 @@ import Editable from './Editable.jsx';
 import Note from './Note.jsx';
 
 @Cerebral({
-  kanban: ['kanban']
+  kanban: 'kanban'
 })
 export default class Notes extends React.Component {
   render() {

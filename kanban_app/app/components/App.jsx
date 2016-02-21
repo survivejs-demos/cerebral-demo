@@ -5,9 +5,7 @@ import {DragDropContext} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 @DragDropContext(HTML5Backend)
-@Cerebral({
-  kanban: ['kanban']
-})
+@Cerebral()
 export default class App extends React.Component {
   render() {
     return (

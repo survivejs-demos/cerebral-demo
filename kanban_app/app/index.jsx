@@ -6,63 +6,18 @@ import {Container} from 'cerebral-view-react';
 import Recorder from 'cerebral-module-recorder';
 import App from './components/App.jsx';
 import Kanban from './modules/Kanban';
-import storage from './libs/storage';
+import storage from './storage';
 
-const APP_STORE = 'cerebral_app';
-
-// XXX: it would be good to validate initial data now
-// if it's invalid somehow, it's easy to end up with a broken app
-const data = storage.get(APP_STORE) || {
-  lanes: {},
-  notes: {},
-};
-const model = Model({
-  data: data,
-  lanes: {
-    ids: Object.keys(data.lanes),
-    list: Model.monkey({
-      cursors: {
-        ids: ['lanes', 'ids'],
-        lanes: ['data', 'lanes'],
-        notes: ['data', 'notes'],
-      },
-      get(data) {
-        return data.ids.map((laneId) => {
-          const lane = data.lanes[laneId];
-
-          // XXX: extra logic is needed because deleting lanes
-          // leaves references hanging
-          if(!lane.notes) {
-            return;
-          }
-
-          return {
-            id: lane.id,
-            editing: lane.editing,
-            name: lane.name,
-            notes: lane.notes.map((noteId) => data.notes[noteId])
-          };
-        }).filter(a => a);
-      }
-    })
-  }
-});
-
-const controller = Controller(model);
+const controller = Controller(Model({}));
 
 controller.addModules({
   kanban: Kanban(),
-  recorder: Recorder()
+  recorder: Recorder(),
+  devtools: process.env.NODE_ENV !== 'production' ? require('cerebral-module-devtools')() : function () {}
 });
 
-if(process.env.NODE_ENV !== 'production') {
-  controller.addModules({
-    devtools: require('cerebral-module-devtools')
-  });
-}
-
-controller.on('signalEnd', () => {
-  storage.set(APP_STORE, controller.get('data'));
+controller.on('change', () => {
+  storage.set('cerebral_app', controller.get('kanban.data'));
 });
 
 ReactDOM.render(

@@ -23,7 +23,7 @@ const noteTarget = {
   connectDropTarget: connect.dropTarget()
 }))
 @Cerebral({
-  kanban: ['kanban']
+  kanban: 'kanban'
 })
 export default class Lane extends React.Component {
   render() {
@@ -88,7 +88,8 @@ export default class Lane extends React.Component {
 
     this.props.signals.kanban.laneUpdated({id: laneId, name, editing: false});
   };
-  deleteLane = () => {
+  deleteLane = (event) => {
+    event.stopPropagation();
     const laneId = this.props.lane.id;
 
     this.props.signals.kanban.laneDeleted({id: laneId});
