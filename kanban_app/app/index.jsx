@@ -55,6 +55,12 @@ controller.addModules({
   recorder: Recorder()
 });
 
+if(process.env.NODE_ENV !== 'production') {
+  controller.addModules({
+    devtools: require('cerebral-module-devtools')
+  });
+}
+
 controller.on('signalEnd', () => {
   storage.set(APP_STORE, controller.get('data'));
 });

@@ -38,6 +38,7 @@
     "baobab": "2.3.3",
     "cerebral": "^0.33.30",
     "cerebral-model-baobab": "^0.4.7",
+    "cerebral-module-devtools": "^0.5.4",
     "cerebral-module-recorder": "^0.5.5",
     "cerebral-view-react": "^0.11.7",
     "node-uuid": "^1.4.7",
